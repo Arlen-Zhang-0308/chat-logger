@@ -1,0 +1,22 @@
+.record-area {
+    display: flex;
+    flex-direction: column-reverse;
+    bottom: 10px;
+  }
+  .record-line {
+    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .record-label {
+    width: 13%;
+  }
+  .record-input {
+    border: 0;
+    padding: 1em;
+    height: 1em;
+    width: 87%;
+    border-radius: 10px;
+  }
+  
