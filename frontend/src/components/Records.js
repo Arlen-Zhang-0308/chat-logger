@@ -12,6 +12,9 @@ export default function Record(args) {
     let second = dateTime.getSeconds();
     let timeString = `${month}-${day} ${hour}:${minute}:${second}`;
 
+    if(!content) {
+        content = ""
+    }
     return (
         <li className="record-line">
             <label className="record-label">{timeString}</label>
