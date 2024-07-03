@@ -1,6 +1,6 @@
 package com.chat.logger.controller.message;
 
-import com.chat.logger.controller.Result;
+import com.chat.logger.commons.Result;
 import com.chat.logger.controller.message.vo.Message;
 import com.chat.logger.controller.message.vo.MessageRequest;
 import com.chat.logger.service.message.MessageService;
@@ -16,18 +16,18 @@ public class MessageController {
     @Autowired
     MessageService messageService;
 
-    @GetMapping("/message")
+    @GetMapping("")
     public List<Message> getAllMessage() {
         return messageService.getAllMessages();
     }
 
-    @PostMapping("/message")
+    @PostMapping("")
     public Result insertMessage(@RequestBody MessageRequest messageRequest) {
         List<Message> messages = messageRequest.getMessageList();
         for (Message message : messages) {
             System.out.println(message.getMessage());
             messageService.insertMessage(message);
         }
-        return new Result("ok", "success");
+        return Result.ok();
     }
 }
