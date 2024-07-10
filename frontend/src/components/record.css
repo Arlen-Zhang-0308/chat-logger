@@ -15,8 +15,10 @@
   .record-input {
     border: 0;
     padding: 1em;
-    height: 1em;
-    width: 87%;
     border-radius: 10px;
+    width: 87%;
+
+    color: black;
+    background-color: white;
   }
   

@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface UserRepository extends MongoRepository<User, ObjectId> {
+    @Query("{ 'username': ?0 }")
+    User findByUsername(String username);
     @Query("{ 'email': ?0 }")
     User findByEmail(String email);
 }

@@ -74,6 +74,7 @@
 .record-container {
   overflow: auto;
   max-height: 85%;
+  height: 85%;
 }
 
 .input-box {

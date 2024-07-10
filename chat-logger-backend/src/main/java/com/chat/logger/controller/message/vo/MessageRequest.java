@@ -1,6 +1,7 @@
 package com.chat.logger.controller.message.vo;
 
 import lombok.Data;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 
@@ -8,5 +9,5 @@ import java.util.List;
 public class MessageRequest {
     List<Message> messageList;
     int listNumber;
-    int userId;
+    String userId;
 }

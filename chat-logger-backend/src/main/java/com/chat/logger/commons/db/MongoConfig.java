@@ -1,4 +1,4 @@
-package com.chat.logger.commons;
+package com.chat.logger.commons.db;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

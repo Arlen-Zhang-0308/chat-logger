@@ -11,8 +11,8 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public User getUserById(ObjectId uid) {
-        return userRepository.findById(uid).orElse(null);
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public User getUserByEmail(String email) {

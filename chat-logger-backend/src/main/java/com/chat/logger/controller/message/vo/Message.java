@@ -16,11 +16,14 @@ public class Message {
     @Id
     private ObjectId id;
 
+    private ObjectId userId;
+
     private Date time;
 
     private String message;
 
-    public Message(Date time, String message) {
+    public Message(ObjectId userId, Date time, String message) {
+        this.userId = userId;
         this.time = time;
         this.message = message;
     }

@@ -13,12 +13,13 @@ export default function Record(args) {
     let timeString = `${month}-${day} ${hour}:${minute}:${second}`;
 
     if(!content) {
-        content = ""
+        content = "";
     }
+    const lines = content.split("\n").length;
     return (
         <li className="record-line">
             <label className="record-label">{timeString}</label>
-            <input className="record-input" value={content} readOnly />
+            <textarea className="record-input" value={content} rows={lines} readOnly/>
         </li>
     );
 }

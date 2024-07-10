@@ -1,6 +1,13 @@
+server:
+    port: 18080
+
 spring:
     data:
         mongodb:
             uri: mongodb://localhost:27017
             auto-index-creation: true
             database: chat-logger
+
+jwt:
+    secret: 541FDSFDsdbaf513fdsv351afs3d35a1sSD1323fs21d31ds531S51DSF
+    expiration: 864000000

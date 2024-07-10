@@ -12,7 +12,7 @@ import java.util.Date;
 @Document("users")
 public class User {
     @Id
-    private ObjectId uid;
+    private ObjectId id;
 
     private String username;
 
@@ -23,6 +23,8 @@ public class User {
     private String lang;
 
     private Date createTime;
+
+    private String role;
 
     public User() {
         this.lang = "zh";

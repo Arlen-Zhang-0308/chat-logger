@@ -8,7 +8,7 @@ public class ChatLoggerBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ChatLoggerBackendApplication.class, args);
-        System.out.println("Running on: http://localhost:8080");
+        System.out.println("Running on: http://localhost:18080");
     }
 
 }

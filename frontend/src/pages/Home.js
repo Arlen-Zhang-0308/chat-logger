@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import Record from "../components/Records";
 import { Link } from 'react-router-dom';
+import Record from "../components/Records";
 import { host } from '../App';
 import '../style/home.css';
 import "../components/record.css";
 
-let userId = null;
 
 export default function Home(props) {
   const [inputValue, setInputValue] = useState("");
@@ -14,6 +13,13 @@ export default function Home(props) {
   const [messageContent, setMessage] = useState("No message.");
   const [isShiftLine, setIsShiftLine] = useState(false);
 
+  let userId = "668c9012180096c508792c65";
+  const token = localStorage.getItem("access-token");
+  console.log("token:", token);
+  if(token) {
+    // userId = 
+  }
+
   useEffect(() => {
     fetchRecords();
     if(addedRecords.length > 0) {
@@ -21,10 +27,21 @@ export default function Home(props) {
     }
 
     async function fetchRecords() {
-      if(!userId) {
+      let gotRecords = JSON.parse(localStorage.getItem("records"));
+      if(token) {
+        if(gotRecords) {
+          for(let rec of gotRecords) {
+            rec.time = new Date(rec.time);
+            rec.userId = userId;
+          }
+          updateRecords(gotRecords);
+          localStorage.removeItem("records");
+        }
+        /* Get records from the backend if the user is logged in. */
         try {
-          const response = await fetch(host + "/message");
-          let gotRecords = await response.json();
+          const response = await fetch(`${host}/message?userId=${userId}`);
+          gotRecords = await response.json();
+          console.log(gotRecords);
           for(let rec of gotRecords) {
             rec.time = new Date(rec.time);
           }
@@ -34,37 +51,66 @@ export default function Home(props) {
           console.log(err.message);
         }
       }
+      else {
+        /* Get records from local storage if not logged in. */
+        if(!gotRecords) {
+          gotRecords = [];
+        }
+        for(let rec of gotRecords) {
+          rec.time = new Date(rec.time);
+        }
+        setRecords(gotRecords);
+      }
     }
 
     function updateRecords(newAdded)  {
-      const postData = {
-        messageList: newAdded,
-        listNumber: newAdded.length,
-        userId: userId
+      if(token) {
+        /* Get and update records from the backend if the user is logged in. */
+        const addData = {
+          messageList: newAdded,
+          listNumber: newAdded.length,
+          userId: userId
+        }
+        fetch(`${host}/message`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(addData)
+        })
+        .then(response => response.json())
+        .then(jsonData => {
+          console.log(jsonData);
+          if(jsonData.status === "ok") {
+            setMessage(`Updated ${newAdded.length} records. `)
+            setAdded([]);
+          }
+          else {
+            setMessage(`Updating ${newAdded.length} records failed. `)
+          }
+        })
+        .catch(err => {
+            console.log(err)
+        })
       }
-      fetch(`${host}/message`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(postData)
-      })
-      .then(response => response.json())
-      .then(jsonData => {
-        console.log(jsonData);
-        if(jsonData.status === "ok") {
-          setMessage(`Updated ${newAdded.length} records. `)
-          setAdded([]);
+      else {
+        /* Get and update records from local storage if not logged in. */
+        let gotRecords = JSON.parse(localStorage.getItem("records"));
+        if(!gotRecords) {
+          gotRecords = [];
         }
-        else {
-          setMessage(`Updating ${newAdded.length} records failed. `)
+        for(let rec of gotRecords) {
+          rec.time = new Date(rec.time);
         }
-      })
-      .catch(err => {
-          console.log(err)
-      })
+        gotRecords = [...gotRecords, ...newAdded];
+        localStorage.setItem("records", JSON.stringify(gotRecords));
+        setRecords(current => {
+          return [...current, ...newAdded]
+        });
+        setAdded([]);
+      }
     }
-  }, [addedRecords]);
+  }, [addedRecords, userId]);
   
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -73,15 +119,29 @@ export default function Home(props) {
     if(e.key === "Shift" || e.key === "Control") {
       setIsShiftLine(false);
     }
+    if(e.key === "Enter" && !isShiftLine)  {
+      setInputValue("");
+    }
   }
   const handleKeyDown = (e) => {
     if(e.key === "Shift" || e.key === "Control") {
       setIsShiftLine(true);
     }
     if(e.key === "Enter" && !isShiftLine)  {
+      let newValue = inputValue;
+
+      if(inputValue.charAt(inputValue.length-1) === "\n") {
+        console.log("is new line");
+        newValue = newValue.substring(0, newValue.length-1);
+      }
+      if(newValue.charAt(0) === "\n") {
+        setInputValue(newValue.substring(1, newValue.length));
+      }
+      setInputValue("");
+
       const data = {
           time: new Date(),
-          message: inputValue
+          message: newValue
       }
       setRecords(current => {
         return [...current, data]
@@ -89,7 +149,6 @@ export default function Home(props) {
       setAdded(current => {
         return [...current, data];
       });
-      setInputValue("");
     }
   }
 

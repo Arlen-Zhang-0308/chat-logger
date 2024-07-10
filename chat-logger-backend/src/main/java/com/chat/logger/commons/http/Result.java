@@ -1,4 +1,4 @@
-package com.chat.logger.commons;
+package com.chat.logger.commons.http;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,13 +7,17 @@ import lombok.Data;
 @AllArgsConstructor
 public class Result {
     String result;
-    String message;
+    Object message;
 
     public static Result ok(String message) {
         return new Result("ok", message);
     }
     public static Result ok() {
         return new Result("ok", "success");
+    }
+
+    public static Result ok(Object data) {
+        return new Result("ok", data);
     }
 
     public static Result err(String message) {

@@ -11,4 +11,7 @@ import java.util.List;
 public interface MessageRepository extends MongoRepository<Message, ObjectId> {
     @Query("{ 'time': ?0 }")
     List<Message> findByTime(Date time);
+
+    @Query("{'userId':  ?0}")
+    List<Message> findByUser(ObjectId uid);
 }

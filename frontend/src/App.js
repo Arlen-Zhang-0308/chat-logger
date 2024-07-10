@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 
-export const host = "http://localhost:8080";
+export const host = "http://localhost:18080";
 
 export function getHost() {
   return host;
