@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -23,19 +21,20 @@ public class JwtUtil {
         Date expireDate = new Date(currentDate.getTime() + expiration);
 
         return JWT.create()
-                .withClaim("username", user.getUsername())
+                .withClaim("email", user.getEmail())
                 .withExpiresAt(expireDate)
                 .sign(Algorithm.HMAC256(secret));
     }
 
-    public String extractUsername(String token) {
-        return JWT.decode(token).getClaim("username").asString();
+    public String extractEmail(String token) {
+        String email = JWT.decode(token).getClaim("email").asString();
+        return email;
     }
 
-    public boolean validateToken(String token, User user) {
-        String username = extractUsername(token);
+    public boolean validateToken(String token, String email) {
+        String username = extractEmail(token);
         Date expirationDate = JWT.decode(token).getExpiresAt();
         Date currentDate = new Date();
-        return username.equals(user.getUsername()) && currentDate.before(expirationDate);
+        return username.equals(email) && currentDate.before(expirationDate);
     }
 }

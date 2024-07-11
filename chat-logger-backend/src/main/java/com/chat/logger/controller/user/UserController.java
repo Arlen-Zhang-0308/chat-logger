@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -32,16 +31,17 @@ public class UserController {
 
     @PostMapping("/login")
     public Result login(@RequestBody User user) {
-        if(user != null) {
-            String email = user.getEmail();
-            User savedUser = userService.getUserByEmail(email);
-            if(user.getPassword().equals(savedUser.getPassword())) {
-                String token = jwtUtil.generateToken(savedUser);
+        if(user == null) return Result.err("Invalid user.");
 
-                return Result.ok(token);
-            }
-            return Result.err("Incorrect password.");
+        String email = user.getEmail();
+        User savedUser = userService.getUserByEmail(email);
+        if(savedUser == null) return Result.err("User not found.");
+
+        if(user.getPassword().equals(savedUser.getPassword())) {
+            String token = jwtUtil.generateToken(savedUser);
+
+            return new Result(savedUser.getEmail(), token);
         }
-        return Result.err("User not found.");
+        return Result.err("Incorrect password.");
     }
 }

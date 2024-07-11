@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Result {
     String result;
-    Object message;
+    String message;
 
     public static Result ok(String message) {
         return new Result("ok", message);
@@ -16,9 +16,6 @@ public class Result {
         return new Result("ok", "success");
     }
 
-    public static Result ok(Object data) {
-        return new Result("ok", data);
-    }
 
     public static Result err(String message) {
         return new Result("failed", message);
