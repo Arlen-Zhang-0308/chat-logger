@@ -1,5 +1,4 @@
 import { useState } from "react";
-import * as jose from 'jose';
 
 import { host } from "../App";
 import "../style/login.css";
@@ -19,28 +18,35 @@ export default function Login() {
         setPassword(e.target.value);
     }
 
-    const submit = function (e) {
+    const submit = async function (e) {
         e.preventDefault();
-        fetch(loginUrl, {
+        const response = await fetch(loginUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: email,
                 password: password
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if(data.result === "ok") {
-                localStorage.setItem("access-token", data.message);
-                navigate("/");
-            }
-            else {
-                alert(`Login failed: ${data.message}`);
-            }
-        })
-        .catch(err => console.error(err));
+        });
+        if(response.status === 401) {
+            const errText = await response.text();
+            alert(errText);
+            return;
+        }
+        const data = await response.json();
+        if(data.result === "failed") {
+            alert(data.message);
+            return;
+        }
+        console.log(data);
+        if(data.result !== "failed") {
+            localStorage.setItem("access-token", data.message);
+            localStorage.setItem("email", data.result);
+            navigate("/");
+        }
+        else {
+            alert(`Login failed: ${data.message}`);
+        }
     }
 
     return (

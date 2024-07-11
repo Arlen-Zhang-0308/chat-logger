@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Record from "../components/Records";
 import { host } from '../App';
 import '../style/home.css';
@@ -13,11 +13,12 @@ export default function Home(props) {
   const [messageContent, setMessage] = useState("No message.");
   const [isShiftLine, setIsShiftLine] = useState(false);
 
-  let userId = "668c9012180096c508792c65";
+  const navigate = useNavigate();
+
+  let userEmail = null;
   const token = localStorage.getItem("access-token");
-  console.log("token:", token);
   if(token) {
-    // userId = 
+    userEmail = localStorage.getItem("email");
   }
 
   useEffect(() => {
@@ -32,14 +33,22 @@ export default function Home(props) {
         if(gotRecords) {
           for(let rec of gotRecords) {
             rec.time = new Date(rec.time);
-            rec.userId = userId;
           }
-          updateRecords(gotRecords);
+          await updateRecords(gotRecords);
           localStorage.removeItem("records");
         }
         /* Get records from the backend if the user is logged in. */
         try {
-          const response = await fetch(`${host}/message?userId=${userId}`);
+          const response = await fetch(`${host}/message`, {
+            method: "GET", 
+            headers: { 'Content-Type': 'application/json',
+                      "Authorization": token }
+          });
+          if(response.status === 401) {
+            alert(response.text());
+            navigate("/login");
+            return;
+          }
           gotRecords = await response.json();
           console.log(gotRecords);
           for(let rec of gotRecords) {
@@ -63,35 +72,32 @@ export default function Home(props) {
       }
     }
 
-    function updateRecords(newAdded)  {
+    async function updateRecords(newAdded)  {
       if(token) {
         /* Get and update records from the backend if the user is logged in. */
         const addData = {
           messageList: newAdded,
           listNumber: newAdded.length,
-          userId: userId
         }
-        fetch(`${host}/message`, {
+        const response = await fetch(`${host}/message`, {
             method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json',
+                      "Authorization": token },
             body: JSON.stringify(addData)
         })
-        .then(response => response.json())
-        .then(jsonData => {
-          console.log(jsonData);
-          if(jsonData.status === "ok") {
-            setMessage(`Updated ${newAdded.length} records. `)
-            setAdded([]);
-          }
-          else {
-            setMessage(`Updating ${newAdded.length} records failed. `)
-          }
-        })
-        .catch(err => {
-            console.log(err)
-        })
+        if(response.status === 401) {
+          alert(response.text());
+          navigate("/login");
+          return;
+        }
+        const jsonData = response.json();
+        if(jsonData.result === "ok") {    // Status returned from the backend is ok, not http response status.
+          setMessage(`Updated ${newAdded.length} records. `)
+          setAdded([]);
+        }
+        else {
+          setMessage(`Updating ${newAdded.length} records failed: ${jsonData.message}`)
+        }
       }
       else {
         /* Get and update records from local storage if not logged in. */
@@ -110,7 +116,7 @@ export default function Home(props) {
         setAdded([]);
       }
     }
-  }, [addedRecords, userId]);
+  }, [addedRecords, navigate, token]);
   
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
