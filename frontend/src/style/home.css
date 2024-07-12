@@ -41,9 +41,22 @@
   width: 100%;
   height: 10%;
   align-content: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .input-box textarea {
-  width: 100%;
+  width: 90%;
   height: 80%;
+}
+.input-box button {
+  width: 9%;
+  height: 80%;
+}
+
+.no-data-label {
+  text-align: center;
+  width: 100%;
 }

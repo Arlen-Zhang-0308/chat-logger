@@ -28,6 +28,8 @@ public class User {
 
     public User() {
         this.lang = "zh";
+        this.createTime = new Date();
+        this.role = "USER";
     }
 }
 

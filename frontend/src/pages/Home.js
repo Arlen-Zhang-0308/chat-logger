@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Record from "../components/Records";
 import { host } from '../App';
 import '../style/home.css';
@@ -30,6 +30,7 @@ export default function Home(props) {
     async function fetchRecords() {
       let gotRecords = JSON.parse(localStorage.getItem("records"));
       if(token) {
+        setMessage("Logged in user. Syncronizing data...");
         if(gotRecords) {
           for(let rec of gotRecords) {
             rec.time = new Date(rec.time);
@@ -55,6 +56,7 @@ export default function Home(props) {
             rec.time = new Date(rec.time);
           }
           setRecords(gotRecords);
+          setMessage("Record data are updated with database!")
         }
         catch (err) {
           console.log(err.message);
@@ -62,6 +64,7 @@ export default function Home(props) {
       }
       else {
         /* Get records from local storage if not logged in. */
+        setMessage("User is not logged in. Getting data from the browser...");
         if(!gotRecords) {
           gotRecords = [];
         }
@@ -69,6 +72,7 @@ export default function Home(props) {
           rec.time = new Date(rec.time);
         }
         setRecords(gotRecords);
+        setMessage("Record data are updated from the browser!");
       }
     }
 
@@ -134,28 +138,32 @@ export default function Home(props) {
       setIsShiftLine(true);
     }
     if(e.key === "Enter" && !isShiftLine)  {
-      let newValue = inputValue;
-
-      if(inputValue.charAt(inputValue.length-1) === "\n") {
-        console.log("is new line");
-        newValue = newValue.substring(0, newValue.length-1);
-      }
-      if(newValue.charAt(0) === "\n") {
-        setInputValue(newValue.substring(1, newValue.length));
-      }
-      setInputValue("");
-
-      const data = {
-          time: new Date(),
-          message: newValue
-      }
-      setRecords(current => {
-        return [...current, data]
-      });
-      setAdded(current => {
-        return [...current, data];
-      });
+      submitRecord();
     }
+  }
+
+  function submitRecord() {
+    let newValue = inputValue;
+
+    if(inputValue.charAt(inputValue.length-1) === "\n") {
+      console.log("is new line");
+      newValue = newValue.substring(0, newValue.length-1);
+    }
+    if(newValue.charAt(0) === "\n") {
+      setInputValue(newValue.substring(1, newValue.length));
+    }
+    setInputValue("");
+
+    const data = {
+        time: new Date(),
+        message: newValue
+    }
+    setRecords(current => {
+      return [...current, data]
+    });
+    setAdded(current => {
+      return [...current, data];
+    });
   }
 
   const listRef = useRef(null);
@@ -168,6 +176,22 @@ export default function Home(props) {
     }
   }
 
+  function clearAuth() {
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("email");
+  }
+  
+  let nav1;
+  let nav2;
+  if(token) {
+    nav1 = <button className='dashboard-btn' onClick={navigate("/dashboard")}>{userEmail}</button>;
+    nav2 = <button onClick={() => clearAuth()}>Logout</button>;
+  }
+  else {
+    nav1 = <button onClick={() => navigate("/register")}>Register</button>;
+    nav2 = <button onClick={() => navigate("/login ")}>Login</button>;
+  }
+
   return (
     <div className="main-box">
       <div className="header">
@@ -176,8 +200,8 @@ export default function Home(props) {
           <label style={{"color": "blue"}}>{messageContent}</label>
         </div>
         <div className="user-operation">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          {nav1}
+          {nav2}
         </div>
       </div>
       <div className="record-container" onClick={recordClick} ref={listRef}>
@@ -185,7 +209,8 @@ export default function Home(props) {
       </div>
       
       <div className="input-box">
-        <textarea onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onChange={handleInputChange} value={inputValue} multiple={true} />
+        <textarea onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} onChange={handleInputChange} value={inputValue} multiple={true}/>
+        <button onClick={submitRecord}>⬆</button>
       </div>
     </div>
   );
@@ -221,6 +246,10 @@ function MessageList({records}) {
   }
 
   const recordList = insertedRecords.map((record, index) => record.time? <Record key={index} time={record.time} content={record.message}/>: record.year? <h3 key={index} className="year-title">{record.year}</h3>: <h4 key={index} className="date-title">{record.date}</h4>)
+  if(recordList.length === 0) {
+    recordList.push(<h2 className='no-data-label'>Type below to add your first record</h2>);
+    recordList.push(<h5 className='no-data-label'>Press <span style={{"font-weight": "lighter", "background": "#DDDDDD"}}>Enter</span> to add new record</h5>);recordList.push(<h5 className='no-data-label'>Press <span style={{"font-weight": "lighter", "background": "#DDDDDD"}}>Shift + Enter</span> to add a new line</h5>);
+  }
 
   return (
       <ul id="record-list">

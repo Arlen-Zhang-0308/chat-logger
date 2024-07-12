@@ -2,6 +2,7 @@ package com.chat.logger.controller.user;
 
 import com.chat.logger.commons.http.Result;
 import com.chat.logger.commons.utils.JwtUtil;
+import com.chat.logger.commons.utils.PasswordUtil;
 import com.chat.logger.controller.user.vo.User;
 import com.chat.logger.service.user.UserService;
 import org.bson.types.ObjectId;
@@ -23,6 +24,10 @@ public class UserController {
         if(savedUser != null) {
             return Result.err("The email is registered. Please use another email.");
         }
+
+        String hashedPassword = PasswordUtil.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+
         if(userService.createUser(user) != null) {
             return Result.ok();
         }
@@ -35,9 +40,13 @@ public class UserController {
 
         String email = user.getEmail();
         User savedUser = userService.getUserByEmail(email);
+
         if(savedUser == null) return Result.err("User not found.");
 
-        if(user.getPassword().equals(savedUser.getPassword())) {
+        String userPassword = user.getPassword();
+        String savedPassword = savedUser.getPassword();
+
+        if(PasswordUtil.matches(userPassword, savedPassword)) {
             String token = jwtUtil.generateToken(savedUser);
 
             return new Result(savedUser.getEmail(), token);
