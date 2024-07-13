@@ -64,7 +64,7 @@ export default function Home(props) {
       }
       else {
         /* Get records from local storage if not logged in. */
-        setMessage("User is not logged in. Getting data from the browser...");
+        setMessage("Haven't login, using browser storage.")
         if(!gotRecords) {
           gotRecords = [];
         }
@@ -179,12 +179,14 @@ export default function Home(props) {
   function clearAuth() {
     localStorage.removeItem("access-token");
     localStorage.removeItem("email");
+    navigate("/");
+    setMessage("Haven't login, using browser storage.")
   }
   
   let nav1;
   let nav2;
   if(token) {
-    nav1 = <button className='dashboard-btn' onClick={navigate("/dashboard")}>{userEmail}</button>;
+    nav1 = <button className='dashboard-btn' onClick={() => navigate("/dashboard")}>{userEmail}</button>;
     nav2 = <button onClick={() => clearAuth()}>Logout</button>;
   }
   else {
@@ -247,8 +249,9 @@ function MessageList({records}) {
 
   const recordList = insertedRecords.map((record, index) => record.time? <Record key={index} time={record.time} content={record.message}/>: record.year? <h3 key={index} className="year-title">{record.year}</h3>: <h4 key={index} className="date-title">{record.date}</h4>)
   if(recordList.length === 0) {
-    recordList.push(<h2 className='no-data-label'>Type below to add your first record</h2>);
-    recordList.push(<h5 className='no-data-label'>Press <span style={{"font-weight": "lighter", "background": "#DDDDDD"}}>Enter</span> to add new record</h5>);recordList.push(<h5 className='no-data-label'>Press <span style={{"font-weight": "lighter", "background": "#DDDDDD"}}>Shift + Enter</span> to add a new line</h5>);
+    recordList.push(<h2 key={0} className='no-data-label'>Type below to add your first record</h2>);
+    recordList.push(<h5 key={1} className='no-data-label'>Press <span style={{"fontWeight": "lighter", "background": "#DDDDDD"}}>Enter</span> to add new record</h5>);
+    recordList.push(<h5 key={2} className='no-data-label'>Press <span style={{"fonWeight": "lighter", "background": "#DDDDDD"}}>Shift + Enter</span> to add a new line</h5>);
   }
 
   return (

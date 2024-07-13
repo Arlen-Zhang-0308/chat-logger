@@ -5,16 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
     const registerUrl = `${host}/user/register`;
-    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const navigate = useNavigate();
 
-    const handleUsernameChange = function (e) {
-        setUsername(e.target.value);
-    }
     const handleEmailChange = function (e) {
         setEmail(e.target.value);
     }
@@ -35,7 +31,6 @@ export default function Register() {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                username: username,
                 email: email,
                 password: password
             })
@@ -52,10 +47,6 @@ export default function Register() {
             <div className="login-box">
                 <form onSubmit={submit}>
                     <div>
-                        <label>Username</label>
-                        <input type="text" name="username" value={username} onChange={handleUsernameChange} />
-                    </div>
-                    <div>
                         <label>Email</label>
                         <input type="text" name="email" value={email} onChange={handleEmailChange} />
                     </div>
@@ -65,8 +56,10 @@ export default function Register() {
                     </div>
                     <div>
                         <label>Confirm password</label>
-                        <input type="password" name="confirmPasswor" value={confirmPassword} onChange={handleConfirmPasswordChange} />
-                        <span>{password===confirmPassword? '✔': '❌'}</span>
+                        <div>
+                            <input type="password" name="confirmPasswor" value={confirmPassword} onChange={handleConfirmPasswordChange} />
+                            <span>{password? password===confirmPassword? '✔': '❌': ""}</span>
+                        </div>
                     </div>
                     
                     <input type="submit" value="Login" />
