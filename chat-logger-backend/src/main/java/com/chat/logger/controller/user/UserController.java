@@ -27,28 +27,30 @@ public class UserController {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @PostMapping("/register")
-    public Result register(@RequestBody User user, @RequestParam String code) {
-        String email = user.getEmail();
+    @PostMapping("/send-verify")
+    public Result sendVerify(@RequestParam String email) {
         User savedUser = userService.getUserByEmail(email);
 
+        // Judge if the email is used.
         if(savedUser != null) {
             return Result.err("The email is used. Please register with another email.");
         }
 
-        /* Verification code is not generated. */
-        if(code == null) {
-            String veriCode = mailUtil.sendVeriCode(email);
+        // Send verification code and store it into redis.
+        String veriCode = mailUtil.sendVeriCode(email);
+        redisTemplate.opsForValue().set(email, veriCode, Duration.ofMinutes(10));
 
-            redisTemplate.opsForValue().set(email, veriCode, Duration.ofMinutes(10));
+        return Result.ok(String.format("Verification code has been sent to %s. Please use it in 10 minutes.", email));
+    }
 
-            return Result.ok(String.format("Verification code has been sent to %s. Please use it in 10 minutes.", email));
-        }
+    @PostMapping("/register")
+    public Result register(@RequestBody User user, @RequestParam String code) {
+        String email = user.getEmail();
 
         // Code is expired or was not stored.
         String savedCode = redisTemplate.opsForValue().get(email);
         if(savedCode == null || !savedCode.equals(code)) {
-            return Result.err("Verification code is expired.");
+            return Result.err("Verification code is incorrect or expired.");
         }
 
         // Expected result
