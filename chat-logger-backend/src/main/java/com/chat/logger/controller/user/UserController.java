@@ -2,12 +2,16 @@ package com.chat.logger.controller.user;
 
 import com.chat.logger.commons.http.Result;
 import com.chat.logger.commons.utils.JwtUtil;
+import com.chat.logger.commons.utils.MailUtil;
 import com.chat.logger.commons.utils.PasswordUtil;
 import com.chat.logger.controller.user.vo.User;
 import com.chat.logger.service.user.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -17,21 +21,44 @@ public class UserController {
     private UserService userService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private MailUtil mailUtil;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @PostMapping("/register")
-    public Result register(@RequestBody User user) {
-        User savedUser = userService.getUserByEmail(user.getEmail());
+    public Result register(@RequestBody User user, @RequestParam String code) {
+        String email = user.getEmail();
+        User savedUser = userService.getUserByEmail(email);
+
         if(savedUser != null) {
-            return Result.err("The email is registered. Please use another email.");
+            return Result.err("The email is used. Please register with another email.");
         }
 
-        String hashedPassword = PasswordUtil.encode(user.getPassword());
-        user.setPassword(hashedPassword);
+        /* Verification code is not generated. */
+        if(code == null) {
+            String veriCode = mailUtil.sendVeriCode(email);
+
+            redisTemplate.opsForValue().set(email, veriCode, Duration.ofMinutes(10));
+
+            return Result.ok(String.format("Verification code has been sent to %s. Please use it in 10 minutes.", email));
+        }
+
+        // Code is expired or was not stored.
+        String savedCode = redisTemplate.opsForValue().get(email);
+        if(savedCode == null || !savedCode.equals(code)) {
+            return Result.err("Verification code is expired.");
+        }
+
+        // Expected result
+        String encryptedPassword = PasswordUtil.encode(user.getPassword());
+        user.setPassword(encryptedPassword);
 
         if(userService.createUser(user) != null) {
-            return Result.ok();
+            return Result.ok("Successfully registered!");
         }
-        return Result.err("Error on register.");
+        return Result.err("Failed to register.");
     }
 
     @PostMapping("/login")

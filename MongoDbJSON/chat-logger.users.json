@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "668c9012180096c508792c65"
+  },
+  "email": "1@qq.com",
+  "password": "1",
+  "lang": "zh",
+  "createTime": {
+    "$date": "2024-05-18T10:00:00.000Z"
+  },
+  "role": "ADMIN"
+},
+{
+  "_id": {
+    "$oid": "668c90be180096c508792c68"
+  },
+  "email": "zylkxj@163.com",
+  "password": "123456",
+  "lang": "zh",
+  "createTime": {
+    "$date": "2024-05-18T10:00:00.000Z"
+  },
+  "role": "ADMIN"
+},
+{
+  "_id": {
+    "$oid": "6691df89b40ec85e7be1f922"
+  },
+  "email": "4@q.com",
+  "password": "$2a$10$qgSU3WGq6tHRhmYGldLfSe6BJDXM3R8HCXzIxl/kDkArIOiXKIcCC",
+  "lang": "zh",
+  "createTime": {
+    "$date": "2024-07-13T01:59:37.433Z"
+  },
+  "role": "USER"
+}]

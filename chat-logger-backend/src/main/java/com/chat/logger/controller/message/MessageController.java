@@ -2,6 +2,7 @@ package com.chat.logger.controller.message;
 
 import com.chat.logger.commons.http.Result;
 import com.chat.logger.commons.utils.JwtUtil;
+import com.chat.logger.commons.utils.MailUtil;
 import com.chat.logger.controller.message.vo.Message;
 import com.chat.logger.controller.message.vo.MessageRequest;
 import com.chat.logger.controller.user.vo.User;
@@ -20,9 +21,9 @@ import java.util.Objects;
 @RequestMapping("/message")
 public class MessageController {
     @Autowired
-    MessageService messageService;
+    private MessageService messageService;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
     private JwtUtil jwtUtil;
 
