@@ -1,0 +1,50 @@
+.register-main-box {
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.register-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  min-width: 35vw;
+  padding: 20px;
+
+  border: 2px solid #228bec;
+  border-radius: 15px;
+}
+
+.register-box form {
+  width: 80%;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.register-box th {
+  text-align: right;
+}
+
+.register-box td{
+  padding: 10px;
+}
+
+div.register-link-text {
+  font-size: small;
+  text-align: center;
+}
+
+a.local-use-link {
+  width: 100%;
+  text-align: center;
+}

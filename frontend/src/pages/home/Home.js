@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Record from "../components/Records";
-import { host } from '../App';
-import '../style/home.css';
-import "../components/record.css";
+import Record from "../../components/record";
+import { host } from '../../App';
+import './home.css';
+import "../../components/record/index.css";
 
 
 export default function Home(props) {

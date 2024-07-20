@@ -14,28 +14,37 @@
   justify-content: space-around;
   align-items: center;
 
-  width: 35vw;
-  height: 30vh;
+  min-width: 35vw;
+  padding: 20px;
 
   border: 2px solid #228bec;
-  border-radius: 3%;
-}
-
-.login-box div {
-  width: 80%;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  border-radius: 15px;
 }
 
 .login-box form {
   width: 80%;
-  height: 200px;
+  padding: 10px;
 
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+}
+
+.login-box th {
+  text-align: right;
+}
+
+.login-box td{
+  padding: 10px;
+}
+
+div.login-link-text {
+  font-size: small;
+  text-align: center;
+}
+
+a.local-use-link {
+  width: 100%;
+  text-align: center;
 }

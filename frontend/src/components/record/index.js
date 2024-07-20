@@ -1,5 +1,5 @@
 import React from "react";
-import "./record.css"
+import "./index.css"
 
 export default function Record(args) {
     let content = args.content;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import { host } from "../App";
-import "../style/login.css";
+import { host } from "../../App";
+import "./login.css";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -53,16 +53,24 @@ export default function Login() {
         <div className="login-main-box">
             <div className="login-box">
                 <form onSubmit={submit}>
-                    <div>
-                        <label>Username</label>
-                        <input type="text" name="email" value={email} onChange={handleEmailChange} />
-                    </div>
-                    <div>
-                        <label>Password</label>
-                        <input type="password" name="password" value={password} onChange={handlePasswordChange} />
-                    </div>
-                    <input type="submit" value="Login" />
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th><label>Email</label></th>
+                                <td><input type="text" name="email" value={email} onChange={handleEmailChange} /></td>
+                            </tr>
+                            <tr>
+                                <th><label>Password</label></th>
+                                <td><input type="password" name="password" value={password} onChange={handlePasswordChange} /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    {(password && email? <input style={{margin: "15px"}} type="submit" value="Login" /> : <input style={{margin: "15px"}} type="submit" value="Login" disabled/>)}
                 </form>
+
+                <div className="register-link-text">Do not have an account? <a href="/register">Click here</a> to register.</div>
+                <div className="register-link-text"><a href="/">Use locally without an account.</a></div>
             </div>
         </div>
     );

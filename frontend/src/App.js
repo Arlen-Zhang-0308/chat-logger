@@ -1,15 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import "./components/record.css";
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Home from './pages/Home';
+import "./components/record/index.css";
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
+import Home from './pages/home/Home';
 
 export const host = "http://localhost:18080";
-
-export function getHost() {
-  return host;
-}
 
 function App(props) {
   return (

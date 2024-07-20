@@ -40,7 +40,7 @@ public class UserController {
         String veriCode = mailUtil.sendVeriCode(email);
         redisTemplate.opsForValue().set(email, veriCode, Duration.ofMinutes(10));
 
-        return Result.ok(String.format("Verification code has been sent to %s. Please use it in 10 minutes.", email));
+        return Result.ok(String.format("Verification code has been sent to %s. Please enter it and submit in 10 minutes.", email));
     }
 
     @PostMapping("/register")
